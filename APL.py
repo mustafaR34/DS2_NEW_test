@@ -1,5 +1,4 @@
 import array as arr
-from mylist import MyList
 
 class ArrayListIterator:
     ''' Iterator class to make MyList iterable.
@@ -7,36 +6,22 @@ class ArrayListIterator:
     '''
 
     def __init__(self, lst):
-        # MyList object reference
         self._lst: ArrayList = lst
-        # member variable to keep track of current index
         self._index: int = 0
 
     def __next__(self):
-        ''''Returns the next value from the stored MyList instance.'''
-        if self._index < len(self._lst):
+        if len(self._lst) > self._index:
             value = self._lst[self._index]
             self._index += 1
             return value
-        # End of Iteration
-        raise StopIteration
+        else:
+            raise StopIteration
 
 
 class ArrayList:
-    '''A list interface.'''
 
     def __init__(self, size: int, value=None) -> None:
-        """Creates a list of the given size, optionally intializing elements to value.
 
-        The list is static. It only has space for size elements.
-
-        Args:
-        - size: size of the list; space is reserved for these many elements. 
-        - value: the optional initial value of the created elements.
-
-        Returns:
-        none
-        """
         if value:
             temp = [value[0], value[1], value[2]]*size
             self.lst = arr.array('I', temp)
@@ -44,15 +29,7 @@ class ArrayList:
             self.lst = arr.array('I', [0]*3*size)
 
     def __len__(self) -> int:
-        '''Returns the size of the list. Allows len() to be called on it.
 
-        Ref: https://stackoverflow.com/q/7642434/1382487
-
-        Args:
-
-        Returns:
-        the size of the list.
-        '''
         return int(len(self.lst) / 3)
 
     def __getitem__(self, i: int):
