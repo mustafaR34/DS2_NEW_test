@@ -1,6 +1,7 @@
 from PIL import Image
 from myimage import MyImage
-from APL import *
+from APL import ArrayList
+from APL import PointerList
 from array import arr
 def remove_channel(src: MyImage, red: bool = False, green: bool = False,
                    blue: bool = False) -> MyImage:
