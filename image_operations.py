@@ -105,8 +105,7 @@ class MyImage:
         # Use PIL to display the image.
         img: Image = Image.new("RGB", self.size)
         img.putdata([rgb for rgb in self.pixels])
-        img.show()
-        
+        img.show()   
         
 def remove_channel(src: MyImage, red: bool = False, green: bool = False,
                    blue: bool = False) -> MyImage:
