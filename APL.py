@@ -1,6 +1,10 @@
 import array as arr
 
+
 class ArrayListIterator:
+    ''' Iterator class to make MyList iterable.
+    https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+    '''
 
     def __init__(self, lst):
         # MyList object reference
@@ -10,7 +14,7 @@ class ArrayListIterator:
 
     def __next__(self):
         ''''Returns the next value from the stored MyList instance.'''
-        if len(self._lst) > self._index
+        if self._index < len(self._lst):
             value = self._lst[self._index]
             self._index += 1
             return value
@@ -27,7 +31,7 @@ class ArrayList:
         The list is static. It only has space for size elements.
 
         Args:
-        - size: size of the list; space is reserved for these many elements.
+        - size: size of the list; space is reserved for these many elements. 
         - value: the optional initial value of the created elements.
 
         Returns:
@@ -88,7 +92,7 @@ class ArrayList:
         self.lst[(3*i)+1] = value[1]
         self.lst[(3*i)+2] = value[2]
 
-    def __iter__(self) -> ArrayListIterator:
+    def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
 
         Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
@@ -127,7 +131,6 @@ class ArrayList:
         '''
         self[i] = value
 
-
 class PointerListIterator:
     ''' Iterator class to make MyList iterable.
     https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
@@ -146,7 +149,6 @@ class PointerListIterator:
         raise StopIteration
 
 
-# node implemented to be used in linked list
 class Node:
 
     def __init__(self, value=None):
@@ -172,7 +174,6 @@ class PointerList:
         self.head = None
         self.size = 0
 
-        # initialize pointer list with the value passed in the constructor
         for i in range(size):
             self.insert(i, value)
 
@@ -203,8 +204,6 @@ class PointerList:
         the value at index i.
         '''
         u = self.head
-
-        # traversing elements until we reach the one required
         for index in range(i):
             u = u.next
         return u.value
@@ -222,8 +221,6 @@ class PointerList:
         none
         '''
         u = self.head
-
-        # traversing elements until we reach the one required
         for index in range(i):
             u = u.next
         u.value = value
@@ -231,17 +228,12 @@ class PointerList:
     def insert(self, i, value):
 
         temp_node = Node(value)
-
-        # inserting initial value
         if self.size == 0:
             self.head = temp_node
-
-        # inserting at the very beginning
         elif i == 0:
             temp_node.next = self.head
             self.head = temp_node
 
-        # inserting at end
         else:
             u = self.head
             for index in range(i-1):
@@ -277,4 +269,3 @@ class PointerList:
         the value at index i.
         '''
         return self[i]
-
