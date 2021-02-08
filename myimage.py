@@ -1,5 +1,6 @@
 from PIL import Image
 from APL import *
+
 class MyImage:
     """ Holds a flattened RGB image and its dimensions.
     """
@@ -9,19 +10,16 @@ class MyImage:
 
         Args:
         - size: (width, height) specifies the dimensions to create.
-        - pointer: if True then the backing list is pointer-based else array-based.
 
         Returns:
         none
         """
-        # Save size, create a list of the desired size with black pixels.
         width, height = self.size = size
         if pointer:
-            self.pixels: PointerList = PointerList(width * height,
-                                                   value=(0, 0, 0))
+            self.pixels: PointerList = PointerList(
+                width * height, value=(0, 0, 0))
         else:
-            self.pixels: ArrayList = ArrayList(width * height,
-                                               value=(0, 0, 0))
+            self.pixels: ArrayList = ArrayList(width * height, value=(0, 0, 0))
 
     def _get_index(self, r: int, c: int) -> int:
         """Returns the list index for the given row, column coordinates.
@@ -42,7 +40,7 @@ class MyImage:
             f"(r, c): ({r}, {c}) for image of size: {self.size}"
         return r*width + c
 
-    def open(path: str) -> 'MyImage':
+    def open(self, path: str, pointer=False):
         """Creates and returns an image containing from the information at file path.
 
         The image format is inferred from the file name. The read image is
@@ -56,7 +54,7 @@ class MyImage:
         """
         # Use PIL to read the image information and store it in our instance.
         img: PIL.Image = Image.open(path)
-        myimg: MyImage = MyImage(img.size)
+        myimg: MyImage = MyImage(img.size, pointer)
         width, height = img.size
         # Covert image to RGB. https://stackoverflow.com/a/11064935/1382487
         img: PIL.Image = img.convert('RGB')
