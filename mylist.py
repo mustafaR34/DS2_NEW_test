@@ -34,7 +34,7 @@ class MyList:
         Returns:
         none
         """
-        self._lst = [None]*size
+        pass
 
     def __len__(self) -> int:
         '''Returns the size of the list. Allows len() to be called on it.
@@ -46,7 +46,7 @@ class MyList:
         Returns:
         the size of the list.
         '''
-        return len(self._lst)
+        pass
 
     def __getitem__(self, i: int):
         '''Returns the value at index, i. Allows indexing syntax.
@@ -62,8 +62,7 @@ class MyList:
         # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Getting invalid list index {i} from list of size {len(self)}'
-
-        return self._lst[i]
+        pass
 
     def __setitem__(self, i: int, value) -> None:
         '''Sets the element at index, i, to value. Allows indexing syntax.
@@ -77,11 +76,10 @@ class MyList:
         Returns:
         none
         '''
-        # Ensure bounds
+        # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Setting invalid list index {i} in list of size {self.size()}'
-
-        self._lst[i] = value
+        pass
 
     def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
