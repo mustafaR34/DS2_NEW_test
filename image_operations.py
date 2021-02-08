@@ -1,3 +1,4 @@
+from PIL import Image
 from myimage import MyImage
 from APL import *
 from array import arr
