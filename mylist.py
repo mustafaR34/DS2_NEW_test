@@ -15,9 +15,8 @@ class MyListIterator:
             value = self._lst[self._index]
             self._index += 1
             return value
-        else:
         # End of Iteration
-            raise StopIteration
+        raise StopIteration
 
 
 class MyList:
