@@ -1,6 +1,6 @@
 from PIL import Image
-from APL import ArrayList
-from APL import PointerList
+from ArrayList import *
+from PointerList import *
 
 class MyImage:
     """ Holds a flattened RGB image and its dimensions.
