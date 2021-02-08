@@ -1,23 +1,16 @@
 from PIL import Image
 import array as arr
 
-class Node:
-    def __init__(self, value):
-        
-        self.data = value
-        self.nextNode = None
 
-
-class PointerListIterator:
+class ArrayListIterator:
 
     def __init__(self, lst):
-        # PointerList object reference
-        self._lst: PointerList = lst
+        self._lst: ArrayList = lst
         # member variable to keep track of current index
         self._index: int = 0
 
     def __next__(self):
-        ''''Returns the next value from the stored PointerList instance.'''
+        ''''Returns the next value from the stored MyList instance.'''
         if self._index < len(self._lst):
             value = self._lst[self._index]
             self._index += 1
@@ -26,125 +19,265 @@ class PointerListIterator:
         raise StopIteration
 
 
-class PointerList:
+class ArrayList:
+    '''A list interface.'''
 
     def __init__(self, size: int, value=None) -> None:
-        self.size = size
-        self.head = None
+        """Creates a list of the given size, optionally intializing elements to value.
 
+        The list is static. It only has space for size elements.
+
+        Args:
+        - size: size of the list; space is reserved for these many elements.
+        - value: the optional initial value of the created elements.
+
+        Returns:
+        none
+        """
         if value:
-            
-            for i in range(size):
-                if self.head == None:
-                    self.head = Node(value)
-                else:
+            temp = [value[0], value[1], value[2]]*size
+            self.lst = arr.array('I', temp)
+        else:
+            self.lst = arr.array('I', [0]*3*size)
 
-                    cNode = self.head
-
-                    while cNode.nextNode:
-                        cNode = cNode.nextNode
-                    if cNode.nextNode == None:
-                        cNode.nextNode = Node(value)
-    
     def __len__(self) -> int:
-        return self.size
+        '''Returns the size of the list. Allows len() to be called on it.
+
+        Ref: https://stackoverflow.com/q/7642434/1382487
+
+        Args:
+
+        Returns:
+        the size of the list.
+        '''
+        return int(len(self.lst) / 3)
 
     def __getitem__(self, i: int):
+        '''Returns the value at index, i. Allows indexing syntax.
+
+        Ref: https://stackoverflow.com/a/33882066/1382487
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Getting invalid list index {i} from list of size {len(self)}'
-        x = 0
-        cNode = self.head
-        while x < i:
-            cNode = cNode.nextNode
-            x += 1
-        return cNode.data
+
+        return (self.lst[3*i], self.lst[(3*i)+1], self.lst[(3*i)+2])
 
     def __setitem__(self, i: int, value) -> None:
+        '''Sets the element at index, i, to value. Allows indexing syntax.
+
+        Ref: https://stackoverflow.com/a/33882066/1382487
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        # Ensure bounds
         assert 0 <= i < len(self),\
             f'Setting invalid list index {i} in list of size {self.size()}'
-        x = 0
-        cNode = self.head
-        while x < i:
-            cNode = cNode.nextNode
-            x += 1
-        cNode.data = value        
-            
 
-    def __iter__(self):
-        return PointerListIterator(self)
+        self.lst[3*i] = value[0]
+        self.lst[(3*i)+1] = value[1]
+        self.lst[(3*i)+2] = value[2]
 
-    def get(self, i: int) -> tuple:
+    def __iter__(self) -> ArrayListIterator:
+        '''Returns an iterator that allows iteration over this list.
+
+        Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+
+        Args:
+
+        Returns:
+        an iterator that allows iteration over this list.
+        '''
+        return ArrayListIterator(self)
+
+    def get(self, i: int):
+        '''Returns the value at index, i.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
         return self[i]
 
     def set(self, i: int, value) -> None:
+        '''Sets the element at index, i, to value.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
         self[i] = value
-        
 
 
-class ArrayListIterator:
-    ''' Using this to iterate over the three RGB arrays'''
+class PointerListIterator:
+    ''' Iterator class to make MyList iterable.
+    https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+    '''
 
-    def __init__(self, red, green, blue):
-        self._red: ArrayList = red
-        self._green: ArrayList = green
-        self._blue: ArrayList = blue
+    def __init__(self, lst):
+        self._lst: PointerList = lst
         self._index: int = 0
 
     def __next__(self):
-        if self._index < len(self._green):
-            r, g, b = self._red[self._index], self._green[self._index], self._blue[self._index]
+        if self._index < len(self._lst):
+            value = self._lst[self._index]
             self._index += 1
-            return (r, g, b)
+            return value
+        # End of Iteration
         raise StopIteration
 
-class ArrayList(object):
-    def __init__(self, size: int, value):
+
+# node implemented to be used in linked list
+class Node:
+
+    def __init__(self, value=None):
+        self.value = value
+        self.next = None
+
+
+class PointerList:
+    '''A list interface.'''
+
+    def __init__(self, size: int, value=None) -> None:
+        """Creates a list of the given size, optionally intializing elements to value.
+
+        The list is static. It only has space for size elements.
+
+        Args:
+        - size: size of the list; space is reserved for these many elements.
+        - value: the optional initial value of the created elements.
+
+        Returns:
+        none
+        """
+        self.head = None
         self.size = 0
-        if value == None:
-            self.red_array = arr.array('l')
-            self.green_array = arr.array('l')
-            self.blue_array = arr.array('l')
 
-        else:
-            self.red_array = arr.array('l', [value[0]])
-            self.green_array = arr.array('l', [value[1]])
-            self.blue_array = arr.array('l', [value[2]])
-            self.size += 1
-
-    def set(self, i: int, value) -> None: 
-        self.__setitem__(i, value)
-
-    def __getitem__(self, i: int):
-        return (self.red_array[i], self.green_array[i], self.blue_array[i])
-        
-    def get(self, i: int) -> (int, int, int): 
-        self.__getitem__(i)
-
-        assert 0 <= i < __len__(self),\
-            f'Getting invalid list index {i} from list of size {len(self)}'
+        # initialize pointer list with the value passed in the constructor
+        for i in range(size):
+            self.insert(i, value)
 
     def __len__(self):
         return self.size
 
+    def __iter__(self) -> PointerListIterator:
+        '''Returns an iterator that allows iteration over this list.
+
+        Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+
+        Args:
+
+        Returns:
+        an iterator that allows iteration over this list.
+        '''
+        return PointerListIterator(self)
+
+    def __getitem__(self, i: int):
+        '''Returns the value at index, i.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        u = self.head
+
+        # traversing elements until we reach the one required
+        for index in range(i):
+            u = u.next
+        return u.value
+
     def __setitem__(self, i: int, value) -> None:
-        if i >= self.size:
-            self.red_array.append(value[0])
-            self.green_array.append(value[1])
-            self.blue_array.append(value[2])
-            self.size += 1
+        '''Sets the element at index, i, to value.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        u = self.head
+
+        # traversing elements until we reach the one required
+        for index in range(i):
+            u = u.next
+        u.value = value
+
+    def insert(self, i, value):
+
+        temp_node = Node(value)
+
+        # inserting initial value
+        if self.size == 0:
+            self.head = temp_node
+
+        # inserting at the very beginning
+        elif i == 0:
+            temp_node.next = self.head
+            self.head = temp_node
+
+        # inserting at end
         else:
-            self.red_array[i] = value[0]
-            self.green_array[i] = value[1]
-            self.blue_array[i] = value[2]
+            u = self.head
+            for index in range(i-1):
+                u = u.next
 
-         # Ensure bounds.
-        assert 0 <= i < len(self),\
-            f'Setting invalid list index {i} in list of size {self}'
+            temp_node.next = u.next
+            u.next = temp_node
+        self.size += 1
 
+    def set(self, i: int, value) -> None:
+        '''Sets the element at index, i, to value.
 
-    def __iter__(self) -> ArrayListIterator:
-        return ArrayListIterator(self.red_array, self.green_array, self.blue_array)
+        Alternate to use of indexing syntax.
 
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        self[i] = value
+
+    def get(self, i: int):
+        '''Returns the value at index, i.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        return self[i]
 
 
 class MyImage:
@@ -383,257 +516,49 @@ def rotations(src: MyImage) -> MyImage:
 
 
 def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
-    """Returns an copy of src with the mask from maskfile applied to it.
+    
+    newImage = MyImage(src.size)
+    column,row=src.size
+    mask=open(maskfile,'r')
 
-    maskfile specifies a text file which contains an n by n mask. It has the
-    following format:
-    - the first line contains n
-    - the next n^2 lines contain 1 element each of the flattened mask
+    masking_matrix=[]
+    average_denominator=0
+    mask_size=int(mask.readline())
+    
+    mask_lines=mask.readlines()
+    for i in range(0,len(mask_lines)):
+        masking_matrix.append(int(mask_lines[i]))
+    
+    for i in range(row):
+        for j in range(column):
+            value = 0
+            mask_index = 0
+            average_denominator = 0
+            for x in range(-(mask_size//2), (mask_size//2)+1, 1):
+                for y in range(-(mask_size//2), (mask_size//2)+1, 1):
+                    try:
+                        value += (sum(src.get(i+x, j+y))//3 ) * masking_matrix[mask_index]
+                        average_denominator = average_denominator + masking_matrix[mask_index]
+                        mask_index += 1
+                    except:
+                        mask_index += 1
+                        continue
 
-    Args:
-    - src: the image on which the mask is to be applied
-    - maskfile: path to a file specifying the mask to be applied
-    - average: if True, averaging should to be done when applying the mask
+            if average==True:
+                value=int(value//average_denominator)
 
-    Returns:
-    an image which the result of applying the specified mask to src.
-    """
+            if value < 0 or value > 255:
+                value=min(max(0,value), 255)
+            newImage.set(i,j,(value,value,value))
 
-    width, height = src.size
 
-    img = src
+    # newImage.show()
+    # newImage.save('give path file here')
+    return newImage
 
-    # new image instantiated that will store the resultant image
-    result_img = MyImage((width, height), src.pointer)
 
-    f = open(maskfile, "r")
-    f = f.readlines()
-    weights = []
-
-    # mask length stores the size of matrix - n
-    mask_length = int(f[0])
-
-    # weights 2D list implemented below
-    temp = []
-    for i in range(1, len(f)):
-        temp.append(int(f[i]))
-        if i % mask_length == 0:
-            weights.append(temp)
-            temp = []
-
-    # row (r) and column (c) used further below for accessing the position of each pixel and using the same for weights list
-    r = 0
-    c = 0
-
-    for i in img.pixels:
-        total_pixel_weight = 0
-        weights_sum = 0
-
-        mid = mask_length//2
-        weights_mid = weights[mid][mid]
-        incrementer = 1
-        temp_offset = 0
-
-        # middle pixel weight added
-        mid_pixel = img.get(r, c)
-        total_pixel_weight += (int((mid_pixel[0]+mid_pixel[1] +
-                                    mid_pixel[2])//3)) * weights_mid
-
-        weights_sum = weights[mid][mid]
-
-        for j in range(mid+1, mask_length):
-            # pixels on right added to weighted sum of the pixel
-            try:
-                avg_pixel = img.get(r, c+incrementer)
-                avg_pixel = (avg_pixel[0] + avg_pixel[1] + avg_pixel[2])//3
-                weight_of_avg_pixel = weights[mid][mid+incrementer]
-                total_pixel_weight += (avg_pixel * weight_of_avg_pixel)
-                weights_sum += weights[mid][mid+incrementer]
-            except:
-                pass
-
-            # pixels on left added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r, c-incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid][mid-incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid][mid-incrementer]
-            except:
-                pass
-
-            # pixels on upper side added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r+incrementer, c)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid+incrementer][mid]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid+incrementer][mid]
-            except:
-                pass
-
-            # pixels on lower side added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r-incrementer, c)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid-incrementer][mid]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid-incrementer][mid]
-            except:
-                pass
-
-            # pixels on upper left diagonal added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r-incrementer, c-incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel2 = weights[mid -
-                                               incrementer][mid-incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid-incrementer][mid-incrementer]
-            except:
-                pass
-
-            # pixels on bottom right added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r+incrementer, c+incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel2 = weights[mid +
-                                               incrementer][mid+incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid+incrementer][mid+incrementer]
-            except:
-                pass
-
-            # pixels on upper right added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r-incrementer, c+incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel2 = weights[mid -
-                                               incrementer][mid+incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid-incrementer][mid+incrementer]
-            except:
-                pass
-
-            # pixels on bottom left added to weighted sum of the pixel
-            try:
-                avg_pixel3 = img.get(r+incrementer, c-incrementer)
-                avg_pixel3 = (avg_pixel3[0] + avg_pixel3[1] + avg_pixel3[2])//3
-                weight_of_avg_pixel3 = weights[mid +
-                                               incrementer][mid-incrementer]
-                total_pixel_weight += (avg_pixel3 * weight_of_avg_pixel3)
-                weights_sum += weights[mid+incrementer][mid-incrementer]
-            except:
-                pass
-
-            for val in range(1, temp_offset+1):
-                # pixels missed on upper right added to weighted sum of the pixel
-                try:
-                    avg_pixel4 = img.get(r-incrementer, c+val)
-                    avg_pixel4 = (avg_pixel4[0] +
-                                  avg_pixel4[1] + avg_pixel4[2])//3
-
-                    weight_of_avg_pixel4 = weights[mid-incrementer][mid+val]
-                    total_pixel_weight += (avg_pixel4 * weight_of_avg_pixel4)
-                    weights_sum += weights[mid-incrementer][mid+val]
-                except:
-                    pass
-
-                # pixels missed on upper left added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r-incrementer, c-val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-incrementer][mid-val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-incrementer][mid-val]
-                except:
-                    pass
-
-                # pixels missed on lower right added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+incrementer, c+val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+incrementer][mid+val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+incrementer][mid+val]
-                except:
-                    pass
-
-                # pixels missed on lower left added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+incrementer, c-val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+incrementer][mid-val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+incrementer][mid-val]
-                except:
-                    pass
-
-                # pixels missed on right lower added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+val, c+incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+val][mid+incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+val][mid+incrementer]
-                except:
-                    pass
-
-                # pixels missed on right upper added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r-val, c+incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-val][mid+incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-val][mid+incrementer]
-                except:
-                    pass
-
-                # pixels missed on left lower added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+val, c-incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+val][mid-incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+val][mid-incrementer]
-                except:
-                    pass
-
-                # pixels missed on left upper added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r-val, c-incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-val][mid-incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-val][mid-incrementer]
-                except:
-                    pass
-
-            temp_offset += 1
-            incrementer += 1
-
-        if average:
-            new_value = int(total_pixel_weight // weights_sum)
-            new_value = (new_value, new_value, new_value)
-        else:
-            new_value = int(total_pixel_weight)
-            new_value = min(max(0, new_value), 255)
-            new_value = (new_value, new_value, new_value)
-
-        result_img.set(r, c, new_value)
-
-        # value of row and column incremented according to the pixels being traversed
-        if c == (width-1):
-            c = -1
-            r += 1
-
-        c += 1
-
-    return result_img
+#img=MyImage((100,100))
+#myimg = MyImage.open('hu-logo.png')
+#rotations(myimg)
+# remove_channel(myimg,True,False,False)
+#apply_mask(myimg,'mask-blur-more.txt')
