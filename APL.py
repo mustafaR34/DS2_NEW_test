@@ -1,21 +1,14 @@
 import array as arr
-class Node:
-    def __init__(self, value):
-        
-        self.data = value
-        self.nextNode = None
 
-
-class PointerListIterator:
+class ArrayListIterator:
 
     def __init__(self, lst):
-        # PointerList object reference
-        self._lst: PointerList = lst
+        self._lst: ArrayList = lst
         # member variable to keep track of current index
         self._index: int = 0
 
     def __next__(self):
-        ''''Returns the next value from the stored PointerList instance.'''
+        ''''Returns the next value from the stored MyList instance.'''
         if self._index < len(self._lst):
             value = self._lst[self._index]
             self._index += 1
@@ -24,122 +17,262 @@ class PointerListIterator:
         raise StopIteration
 
 
-class PointerList:
+class ArrayList:
+    '''A list interface.'''
 
     def __init__(self, size: int, value=None) -> None:
-        self.size = size
-        self.head = None
+        """Creates a list of the given size, optionally intializing elements to value.
 
+        The list is static. It only has space for size elements.
+
+        Args:
+        - size: size of the list; space is reserved for these many elements.
+        - value: the optional initial value of the created elements.
+
+        Returns:
+        none
+        """
         if value:
-            
-            for i in range(size):
-                if self.head == None:
-                    self.head = Node(value)
-                else:
+            temp = [value[0], value[1], value[2]]*size
+            self.lst = arr.array('I', temp)
+        else:
+            self.lst = arr.array('I', [0]*3*size)
 
-                    cNode = self.head
-
-                    while cNode.nextNode:
-                        cNode = cNode.nextNode
-                    if cNode.nextNode == None:
-                        cNode.nextNode = Node(value)
-    
     def __len__(self) -> int:
-        return self.size
+        '''Returns the size of the list. Allows len() to be called on it.
+
+        Ref: https://stackoverflow.com/q/7642434/1382487
+
+        Args:
+
+        Returns:
+        the size of the list.
+        '''
+        return int(len(self.lst) / 3)
 
     def __getitem__(self, i: int):
+        '''Returns the value at index, i. Allows indexing syntax.
+
+        Ref: https://stackoverflow.com/a/33882066/1382487
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        # Ensure bounds.
         assert 0 <= i < len(self),\
             f'Getting invalid list index {i} from list of size {len(self)}'
-        x = 0
-        cNode = self.head
-        while x < i:
-            cNode = cNode.nextNode
-            x += 1
-        return cNode.data
+
+        return (self.lst[3*i], self.lst[(3*i)+1], self.lst[(3*i)+2])
 
     def __setitem__(self, i: int, value) -> None:
+        '''Sets the element at index, i, to value. Allows indexing syntax.
+
+        Ref: https://stackoverflow.com/a/33882066/1382487
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        # Ensure bounds
         assert 0 <= i < len(self),\
             f'Setting invalid list index {i} in list of size {self.size()}'
-        x = 0
-        cNode = self.head
-        while x < i:
-            cNode = cNode.nextNode
-            x += 1
-        cNode.data = value        
-            
 
-    def __iter__(self):
-        return PointerListIterator(self)
+        self.lst[3*i] = value[0]
+        self.lst[(3*i)+1] = value[1]
+        self.lst[(3*i)+2] = value[2]
 
-    def get(self, i: int) -> tuple:
+    def __iter__(self) -> ArrayListIterator:
+        '''Returns an iterator that allows iteration over this list.
+
+        Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+
+        Args:
+
+        Returns:
+        an iterator that allows iteration over this list.
+        '''
+        return ArrayListIterator(self)
+
+    def get(self, i: int):
+        '''Returns the value at index, i.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
         return self[i]
 
     def set(self, i: int, value) -> None:
+        '''Sets the element at index, i, to value.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
         self[i] = value
-        
 
 
-class ArrayListIterator:
-    ''' Using this to iterate over the three RGB arrays'''
+class PointerListIterator:
+    ''' Iterator class to make MyList iterable.
+    https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+    '''
 
-    def __init__(self, red, green, blue):
-        self._red: ArrayList = red
-        self._green: ArrayList = green
-        self._blue: ArrayList = blue
+    def __init__(self, lst):
+        self._lst: PointerList = lst
         self._index: int = 0
 
     def __next__(self):
-        if self._index < len(self._green):
-            r, g, b = self._red[self._index], self._green[self._index], self._blue[self._index]
+        if self._index < len(self._lst):
+            value = self._lst[self._index]
             self._index += 1
-            return (r, g, b)
+            return value
+        # End of Iteration
         raise StopIteration
 
-class ArrayList(object):
-    def __init__(self, size: int, value):
+
+# node implemented to be used in linked list
+class Node:
+
+    def __init__(self, value=None):
+        self.value = value
+        self.next = None
+
+
+class PointerList:
+    '''A list interface.'''
+
+    def __init__(self, size: int, value=None) -> None:
+        """Creates a list of the given size, optionally intializing elements to value.
+
+        The list is static. It only has space for size elements.
+
+        Args:
+        - size: size of the list; space is reserved for these many elements.
+        - value: the optional initial value of the created elements.
+
+        Returns:
+        none
+        """
+        self.head = None
         self.size = 0
-        if value == None:
-            self.red_array = arr.array('l')
-            self.green_array = arr.array('l')
-            self.blue_array = arr.array('l')
 
-        else:
-            self.red_array = arr.array('l', [value[0]])
-            self.green_array = arr.array('l', [value[1]])
-            self.blue_array = arr.array('l', [value[2]])
-            self.size += 1
-
-    def set(self, i: int, value) -> None: 
-        self.__setitem__(i, value)
-
-    def __getitem__(self, i: int):
-        return (self.red_array[i], self.green_array[i], self.blue_array[i])
-        
-    def get(self, i: int) -> (int, int, int): 
-        self.__getitem__(i)
-
-        assert 0 <= i < __len__(self),\
-            f'Getting invalid list index {i} from list of size {len(self)}'
+        # initialize pointer list with the value passed in the constructor
+        for i in range(size):
+            self.insert(i, value)
 
     def __len__(self):
         return self.size
 
+    def __iter__(self) -> PointerListIterator:
+        '''Returns an iterator that allows iteration over this list.
+
+        Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+
+        Args:
+
+        Returns:
+        an iterator that allows iteration over this list.
+        '''
+        return PointerListIterator(self)
+
+    def __getitem__(self, i: int):
+        '''Returns the value at index, i.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        u = self.head
+
+        # traversing elements until we reach the one required
+        for index in range(i):
+            u = u.next
+        return u.value
+
     def __setitem__(self, i: int, value) -> None:
-        if i >= self.size:
-            self.red_array.append(value[0])
-            self.green_array.append(value[1])
-            self.blue_array.append(value[2])
-            self.size += 1
+        '''Sets the element at index, i, to value.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        u = self.head
+
+        # traversing elements until we reach the one required
+        for index in range(i):
+            u = u.next
+        u.value = value
+
+    def insert(self, i, value):
+
+        temp_node = Node(value)
+
+        # inserting initial value
+        if self.size == 0:
+            self.head = temp_node
+
+        # inserting at the very beginning
+        elif i == 0:
+            temp_node.next = self.head
+            self.head = temp_node
+
+        # inserting at end
         else:
-            self.red_array[i] = value[0]
-            self.green_array[i] = value[1]
-            self.blue_array[i] = value[2]
+            u = self.head
+            for index in range(i-1):
+                u = u.next
 
-         # Ensure bounds.
-        assert 0 <= i < len(self),\
-            f'Setting invalid list index {i} in list of size {self}'
+            temp_node.next = u.next
+            u.next = temp_node
+        self.size += 1
 
+    def set(self, i: int, value) -> None:
+        '''Sets the element at index, i, to value.
 
-    def __iter__(self) -> ArrayListIterator:
-        return ArrayListIterator(self.red_array, self.green_array, self.blue_array)
+        Alternate to use of indexing syntax.
 
+        Args:
+        - i: the index of the elemnent to be set
+        - value: the value to be set
+
+        Returns:
+        none
+        '''
+        self[i] = value
+
+    def get(self, i: int):
+        '''Returns the value at index, i.
+
+        Alternate to use of indexing syntax.
+
+        Args:
+        - i: the index from which to retrieve the value.
+
+        Returns:
+        the value at index i.
+        '''
+        return self[i]
