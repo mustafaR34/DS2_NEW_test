@@ -1,5 +1,4 @@
 from PIL import Image
-from APL import *
 import array as arr
 
 class ArrayListIterator:
