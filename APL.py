@@ -3,13 +3,14 @@ import array as arr
 class ArrayListIterator:
 
     def __init__(self, lst):
+        # MyList object reference
         self._lst: ArrayList = lst
         # member variable to keep track of current index
         self._index: int = 0
 
     def __next__(self):
         ''''Returns the next value from the stored MyList instance.'''
-        if self._index < len(self._lst):
+        if len(self._lst) > self._index
             value = self._lst[self._index]
             self._index += 1
             return value
@@ -276,3 +277,4 @@ class PointerList:
         the value at index i.
         '''
         return self[i]
+
