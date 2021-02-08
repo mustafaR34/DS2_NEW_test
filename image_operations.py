@@ -1,4 +1,6 @@
 from myimage import MyImage
+from APL import *
+from array import arr
 def remove_channel(src: MyImage, red: bool = False, green: bool = False,
                    blue: bool = False) -> MyImage:
     """Returns a copy of src in which the indicated channels are suppressed.
