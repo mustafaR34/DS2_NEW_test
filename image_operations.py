@@ -1,21 +1,20 @@
 from PIL import Image
 import array as arr
 
-
 class ArrayListIterator:
+    ''' Iterator class to make MyList iterable.
+    https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
+    '''
 
     def __init__(self, lst):
         self._lst: ArrayList = lst
-        # member variable to keep track of current index
         self._index: int = 0
 
     def __next__(self):
-        ''''Returns the next value from the stored MyList instance.'''
-        if self._index < len(self._lst):
+        if len(self._lst) > self._index:
             value = self._lst[self._index]
             self._index += 1
             return value
-        # End of Iteration
         raise StopIteration
 
 
@@ -28,7 +27,7 @@ class ArrayList:
         The list is static. It only has space for size elements.
 
         Args:
-        - size: size of the list; space is reserved for these many elements.
+        - size: size of the list; space is reserved for these many elements. 
         - value: the optional initial value of the created elements.
 
         Returns:
@@ -89,7 +88,7 @@ class ArrayList:
         self.lst[(3*i)+1] = value[1]
         self.lst[(3*i)+2] = value[2]
 
-    def __iter__(self) -> ArrayListIterator:
+    def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
 
         Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
@@ -128,7 +127,6 @@ class ArrayList:
         '''
         self[i] = value
 
-
 class PointerListIterator:
     ''' Iterator class to make MyList iterable.
     https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
@@ -147,7 +145,6 @@ class PointerListIterator:
         raise StopIteration
 
 
-# node implemented to be used in linked list
 class Node:
 
     def __init__(self, value=None):
@@ -173,7 +170,6 @@ class PointerList:
         self.head = None
         self.size = 0
 
-        # initialize pointer list with the value passed in the constructor
         for i in range(size):
             self.insert(i, value)
 
@@ -204,8 +200,6 @@ class PointerList:
         the value at index i.
         '''
         u = self.head
-
-        # traversing elements until we reach the one required
         for index in range(i):
             u = u.next
         return u.value
@@ -223,8 +217,6 @@ class PointerList:
         none
         '''
         u = self.head
-
-        # traversing elements until we reach the one required
         for index in range(i):
             u = u.next
         u.value = value
@@ -232,17 +224,12 @@ class PointerList:
     def insert(self, i, value):
 
         temp_node = Node(value)
-
-        # inserting initial value
         if self.size == 0:
             self.head = temp_node
-
-        # inserting at the very beginning
         elif i == 0:
             temp_node.next = self.head
             self.head = temp_node
 
-        # inserting at end
         else:
             u = self.head
             for index in range(i-1):
@@ -288,18 +275,17 @@ class MyImage:
         """Initializes a black image of the given size.
 
         Args:
-        - size: (width, height) specifies the dimensions to create.
+        - size: (WT, HT) specifies the dimensions to create.
 
         Returns:
         none
         """
-        self.pointer = pointer
-        width, height = self.size = size
+        WT, HT = self.size = size
         if pointer:
             self.pixels: PointerList = PointerList(
-                width * height, value=(0, 0, 0))
+                WT * HT, value=(0, 0, 0))
         else:
-            self.pixels: ArrayList = ArrayList(width * height, value=(0, 0, 0))
+            self.pixels: ArrayList = ArrayList(WT * HT, value=(0, 0, 0))
 
     def _get_index(self, r: int, c: int) -> int:
         """Returns the list index for the given row, column coordinates.
@@ -315,12 +301,12 @@ class MyImage:
         the list index corresponding to the given row and column coordinates
         """
         # Confirm bounds, compute and return list index.
-        width, height = self.size
-        assert 0 <= r < height and 0 <= c < width, "Bad image coordinates: "\
+        WT, HT = self.size
+        assert 0 <= r < HT and 0 <= c < WT, "Bad image coordinates: "\
             f"(r, c): ({r}, {c}) for image of size: {self.size}"
-        return r*width + c
+        return r*WT + c
 
-    def open(path, pointer=False):
+    def open(self, path: str, pointer=False):
         """Creates and returns an image containing from the information at file path.
 
         The image format is inferred from the file name. The read image is
@@ -333,14 +319,14 @@ class MyImage:
         the image created using the information from file path.
         """
         # Use PIL to read the image information and store it in our instance.
-        img: PIL.Image = Image.open(path)
-        myimg: MyImage = MyImage(img.size, pointer)
-        width, height = img.size
+        photo: PIL.Image = Image.open(path)
+        myimg: MyImage = MyImage(photo.size, pointer)
+        WT, HT = photo.size
         # Covert image to RGB. https://stackoverflow.com/a/11064935/1382487
-        img: PIL.Image = img.convert('RGB')
+        photo: PIL.Image = photo.convert('RGB')
         # Get list of pixel values (https://stackoverflow.com/a/1109747/1382487),
         # copy to our instance and return it.
-        for i, rgb in enumerate(list(img.getdata())):
+        for i, rgb in enumerate(list(photo.getdata())):
             myimg.pixels.set(i, rgb)
         return myimg
 
@@ -356,9 +342,9 @@ class MyImage:
         none
         """
         # Use PIL to write the image.
-        img: PIL.Image = Image.new("RGB", self.size)
-        img.putdata([rgb for rgb in self.pixels])
-        img.save(path)
+        photo: PIL.Image = Image.new("RGB", self.size)
+        photo.putdata([rgb for rgb in self.pixels])
+        photo.save(path)
 
     def get(self, r: int, c: int) -> (int, int, int):
         """Returns the value of the pixel at the given row and column coordinates.
@@ -394,10 +380,9 @@ class MyImage:
         none
         """
         # Use PIL to display the image.
-        img: PIL.Image = Image.new("RGB", self.size)
-        img.putdata([rgb for rgb in self.pixels])
-        img.show()
-
+        photo: PIL.Image = Image.new("RGB", self.size)
+        photo.putdata([rgb for rgb in self.pixels])
+        photo.show()
 
 def remove_channel(src: MyImage, red: bool = False, green: bool = False,
                    blue: bool = False) -> MyImage:
@@ -414,36 +399,34 @@ def remove_channel(src: MyImage, red: bool = False, green: bool = False,
     Returns:
     a copy of src with the indicated channels suppressed.
     """
+    WT, HT = src.size
 
-    width, height = src.size
+    # photo will store the resultant image in this case
+    photo = src
 
-    # img will store the resultant image in this case
-    img = src
+    for j in range(HT):
+        for i in range(WT):
+            temp_t_tuple = photo.get(j, i)
 
-    for j in range(height):
-        for i in range(width):
-            temp_tuple = img.get(j, i)
+            # RED color suppressed if RED is true
+            if RED:
+                temp_t_tuple = (0,) + (temp_t_tuple[1],) + (temp_t_tuple[2],)
 
-            # red color suppressed if red is true
-            if red:
-                temp_tuple = (0,) + (temp_tuple[1],) + (temp_tuple[2],)
+            # GREEN color suppressed if GREEN is true
+            if GREEN:
+                temp_t_tuple = (temp_t_tuple[0],) + (0,) + (temp_t_tuple[2],)
 
-            # green color suppressed if green is true
-            if green:
-                temp_tuple = (temp_tuple[0],) + (0,) + (temp_tuple[2],)
+            # BLUE color suppressed if BLUE is true
+            if BLUE:
+                temp_t_tuple = (temp_t_tuple[0],) + (temp_t_tuple[1],) + (0,)
 
-            # blue color suppressed if blue is true
-            if blue:
-                temp_tuple = (temp_tuple[0],) + (temp_tuple[1],) + (0,)
+            # default condition implemented (RED channel suppressed)
+            if RED == False and BLUE == False and GREEN == False:
+                temp_t_tuple = (0,) + (temp_t_tuple[1],) + (temp_t_tuple[2],)
 
-            # default condition implemented (red channel suppressed)
-            if red == False and blue == False and green == False:
-                temp_tuple = (0,) + (temp_tuple[1],) + (temp_tuple[2],)
+            photo.set(j, i, temp_t_tuple)
 
-            img.set(j, i, temp_tuple)
-
-    return img
-
+    return photo
 
 def rotations(src: MyImage) -> MyImage:
     """Returns an image containing the 4 rotations of src.
@@ -456,67 +439,67 @@ def rotations(src: MyImage) -> MyImage:
     Returns:
     an image twice the size of src and containing the 4 rotations of src.
     """
+    WT, HT = src.size
 
-    width, height = src.size
-
-    img = src
+    photo = src
 
     # two temporary images instantiated for use in between rotations
-    temp_img = MyImage((width, height), src.pointer)
-    temp_img2 = MyImage((width, height), src.pointer)
+    temp_img = MyImage((WT, HT), src.pointer)
+    temp_img2 = MyImage((WT, HT), src.pointer)
 
     # new image instantiated that will store the resultant image
-    result_img = MyImage((width*2, height*2), src.pointer)
+    result_photo = MyImage((WT*2, HT*2), src.pointer)
 
     # rotate once (top left image)
-    for j in range(height):
-        for i in range(width):
-            temp_tuple = img.get(j, i)
+    for j in range(HT):
+        for i in range(WT):
+            temp_t_tuple = photo.get(j, i)
 
-            new_row = height - 1 - i
-            new_column = j
+            x_axis = HT - 1 - i
+            y_axis = j
 
-            temp_img.set(new_row, new_column, temp_tuple)
-            result_img.set(new_row, new_column, temp_tuple)
+            temp_img.set(x_axis, y_axis, temp_t_tuple)
+            result_photo.set(x_axis, y_axis, temp_t_tuple)
 
     # rotate twice (bottom left image)
-    for j in range(height):
-        for i in range(width):
-            temp_tuple = temp_img.get(j, i)
+    for j in range(HT):
+        for i in range(WT):
+            temp_t_tuple = temp_img.get(j, i)
 
-            new_row = height - 1 - i
-            new_column = j
+            x_axis = HT - 1 - i
+            y_axis = j
 
-            temp_img2.set(new_row, new_column, temp_tuple)
-            result_img.set(new_row+height, new_column, temp_tuple)
+            temp_img2.set(x_axis, y_axis, temp_t_tuple)
+            result_photo.set(x_axis+HT, y_axis, temp_t_tuple)
 
     # rotate thrice (bottom right image)
-    for j in range(height):
-        for i in range(width):
-            temp_tuple = temp_img2.get(j, i)
+    for j in range(HT):
+        for i in range(WT):
+            temp_t_tuple = temp_img2.get(j, i)
 
-            new_row = height - 1 - i
-            new_column = j
+            x_axis = HT - 1 - i
+            y_axis = j
 
-            temp_img.set(new_row, new_column, temp_tuple)
-            result_img.set(new_row+height, new_column+width, temp_tuple)
+            temp_img.set(x_axis, y_axis, temp_t_tuple)
+            result_photo.set(x_axis+HT, y_axis+WT, temp_t_tuple)
 
     # rotate fourth time (top right image or original image)
-    for j in range(height):
-        for i in range(width):
-            temp_tuple = temp_img.get(j, i)
+    for j in range(HT):
+        for i in range(WT):
+            temp_t_tuple = temp_img.get(j, i)
 
-            new_row = height - 1 - i
-            new_column = j
+            x_axis = HT - 1 - i
+            y_axis = j
 
-            temp_img2.set(new_row, new_column, temp_tuple)
-            result_img.set(new_row, new_column+width, temp_tuple)
+            temp_img2.set(x_axis, y_axis, temp_t_tuple)
+            result_photo.set(x_axis, y_axis+WT, temp_t_tuple)
 
-    return result_img
+    return result_photo
 
 
 def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
-    """Returns an copy of src with the mask from maskfile applied to it.
+    #src.size is a tuple holding size of the picture (WT, HT)
+     """Returns an copy of src with the mask from maskfile applied to it.
 
     maskfile specifies a text file which contains an n by n mask. It has the
     following format:
@@ -531,15 +514,14 @@ def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
     Returns:
     an image which the result of applying the specified mask to src.
     """
+    WT, HT = src.size
 
-    width, height = src.size
-
-    img = src
+    photo = src
 
     # new image instantiated that will store the resultant image
-    result_img = MyImage((width, height), src.pointer)
+    result_photo = MyImage((WT, HT), src.pointer)
 
-    f = open(maskfile, "r")
+    f = open(maskfile, "x_axis")
     f = f.readlines()
     weights = []
 
@@ -554,21 +536,21 @@ def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
             weights.append(temp)
             temp = []
 
-    # row (r) and column (c) used further below for accessing the position of each pixel and using the same for weights list
-    r = 0
-    c = 0
+    # row (x_axis) and column (y_axis) used further below for accessing the position of each pixel and using the same for weights list
+    x_axis = 0
+    y_axis = 0
 
-    for i in img.pixels:
+    for i in photo.pixels:
         total_pixel_weight = 0
         weights_sum = 0
 
         mid = mask_length//2
         weights_mid = weights[mid][mid]
-        incrementer = 1
+        inc = 1
         temp_offset = 0
 
         # middle pixel weight added
-        mid_pixel = img.get(r, c)
+        mid_pixel = photo.get(x_axis, y_axis)
         total_pixel_weight += (int((mid_pixel[0]+mid_pixel[1] +
                                     mid_pixel[2])//3)) * weights_mid
 
@@ -577,180 +559,180 @@ def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
         for j in range(mid+1, mask_length):
             # pixels on right added to weighted sum of the pixel
             try:
-                avg_pixel = img.get(r, c+incrementer)
+                avg_pixel = photo.get(x_axis, y_axis+inc)
                 avg_pixel = (avg_pixel[0] + avg_pixel[1] + avg_pixel[2])//3
-                weight_of_avg_pixel = weights[mid][mid+incrementer]
+                weight_of_avg_pixel = weights[mid][mid+inc]
                 total_pixel_weight += (avg_pixel * weight_of_avg_pixel)
-                weights_sum += weights[mid][mid+incrementer]
+                weights_sum += weights[mid][mid+inc]
             except:
                 pass
 
             # pixels on left added to weighted sum of the pixel
             try:
-                avg_pixel2 = img.get(r, c-incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid][mid-incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid][mid-incrementer]
+                a2 = photo.get(x_axis, y_axis-inc)
+                a2 = (a2[0] + a2[1] + a2[2])//3
+                weight_of_avg_pixel = weights[mid][mid-inc]
+                total_pixel_weight += (a2 * weight_of_avg_pixel)
+                weights_sum += weights[mid][mid-inc]
             except:
                 pass
 
             # pixels on upper side added to weighted sum of the pixel
             try:
-                avg_pixel2 = img.get(r+incrementer, c)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid+incrementer][mid]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid+incrementer][mid]
+                a2 = photo.get(x_axis+inc, y_axis)
+                a2 = (a2[0] + a2[1] + a2[2])//3
+                weight_of_avg_pixel = weights[mid+inc][mid]
+                total_pixel_weight += (a2 * weight_of_avg_pixel)
+                weights_sum += weights[mid+inc][mid]
             except:
                 pass
 
             # pixels on lower side added to weighted sum of the pixel
             try:
-                avg_pixel2 = img.get(r-incrementer, c)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid-incrementer][mid]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid-incrementer][mid]
+                a2 = photo.get(x_axis-inc, y_axis)
+                a2 = (a2[0] + a2[1] + a2[2])//3
+                weight_of_avg_pixel = weights[mid-inc][mid]
+                total_pixel_weight += (a2 * weight_of_avg_pixel)
+                weights_sum += weights[mid-inc][mid]
             except:
                 pass
 
             # pixels on upper left diagonal added to weighted sum of the pixel
             try:
-                avg_pixel2 = img.get(r-incrementer, c-incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
+                a2 = photo.get(x_axis-inc, y_axis-inc)
+                a2 = (a2[0] + a2[1] + a2[2])//3
                 weight_of_avg_pixel2 = weights[mid -
-                                               incrementer][mid-incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid-incrementer][mid-incrementer]
+                                               inc][mid-inc]
+                total_pixel_weight += (a2 * weight_of_avg_pixel2)
+                weights_sum += weights[mid-inc][mid-inc]
             except:
                 pass
 
             # pixels on bottom right added to weighted sum of the pixel
             try:
-                avg_pixel2 = img.get(r+incrementer, c+incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
+                a2 = photo.get(x_axis+inc, y_axis+inc)
+                a2 = (a2[0] + a2[1] + a2[2])//3
                 weight_of_avg_pixel2 = weights[mid +
-                                               incrementer][mid+incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid+incrementer][mid+incrementer]
+                                               inc][mid+inc]
+                total_pixel_weight += (a2 * weight_of_avg_pixel2)
+                weights_sum += weights[mid+inc][mid+inc]
             except:
                 pass
 
             # pixels on upper right added to weighted sum of the pixel
             try:
-                avg_pixel2 = img.get(r-incrementer, c+incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
+                a2 = photo.get(x_axis-inc, y_axis+inc)
+                a2 = (a2[0] + a2[1] + a2[2])//3
                 weight_of_avg_pixel2 = weights[mid -
-                                               incrementer][mid+incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid-incrementer][mid+incrementer]
+                                               inc][mid+inc]
+                total_pixel_weight += (a2 * weight_of_avg_pixel2)
+                weights_sum += weights[mid-inc][mid+inc]
             except:
                 pass
 
             # pixels on bottom left added to weighted sum of the pixel
             try:
-                avg_pixel3 = img.get(r+incrementer, c-incrementer)
-                avg_pixel3 = (avg_pixel3[0] + avg_pixel3[1] + avg_pixel3[2])//3
+                a3 = photo.get(x_axis+inc, y_axis-inc)
+                a3 = (a3[0] + a3[1] + a3[2])//3
                 weight_of_avg_pixel3 = weights[mid +
-                                               incrementer][mid-incrementer]
-                total_pixel_weight += (avg_pixel3 * weight_of_avg_pixel3)
-                weights_sum += weights[mid+incrementer][mid-incrementer]
+                                               inc][mid-inc]
+                total_pixel_weight += (a3 * weight_of_avg_pixel3)
+                weights_sum += weights[mid+inc][mid-inc]
             except:
                 pass
 
             for val in range(1, temp_offset+1):
                 # pixels missed on upper right added to weighted sum of the pixel
                 try:
-                    avg_pixel4 = img.get(r-incrementer, c+val)
-                    avg_pixel4 = (avg_pixel4[0] +
-                                  avg_pixel4[1] + avg_pixel4[2])//3
+                    a4 = photo.get(x_axis-inc, y_axis+val)
+                    a4 = (a4[0] +
+                                  a4[1] + a4[2])//3
 
-                    weight_of_avg_pixel4 = weights[mid-incrementer][mid+val]
-                    total_pixel_weight += (avg_pixel4 * weight_of_avg_pixel4)
-                    weights_sum += weights[mid-incrementer][mid+val]
+                    weight_of_avg_pixel4 = weights[mid-inc][mid+val]
+                    total_pixel_weight += (a4 * weight_of_avg_pixel4)
+                    weights_sum += weights[mid-inc][mid+val]
                 except:
                     pass
 
                 # pixels missed on upper left added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r-incrementer, c-val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-incrementer][mid-val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-incrementer][mid-val]
+                    a5 = photo.get(x_axis-inc, y_axis-val)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid-inc][mid-val]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid-inc][mid-val]
                 except:
                     pass
 
                 # pixels missed on lower right added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r+incrementer, c+val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+incrementer][mid+val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+incrementer][mid+val]
+                    a5 = photo.get(x_axis+inc, y_axis+val)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid+inc][mid+val]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid+inc][mid+val]
                 except:
                     pass
 
                 # pixels missed on lower left added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r+incrementer, c-val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+incrementer][mid-val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+incrementer][mid-val]
+                    a5 = photo.get(x_axis+inc, y_axis-val)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid+inc][mid-val]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid+inc][mid-val]
                 except:
                     pass
 
                 # pixels missed on right lower added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r+val, c+incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+val][mid+incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+val][mid+incrementer]
+                    a5 = photo.get(x_axis+val, y_axis+inc)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid+val][mid+inc]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid+val][mid+inc]
                 except:
                     pass
 
                 # pixels missed on right upper added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r-val, c+incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-val][mid+incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-val][mid+incrementer]
+                    a5 = photo.get(x_axis-val, y_axis+inc)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid-val][mid+inc]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid-val][mid+inc]
                 except:
                     pass
 
                 # pixels missed on left lower added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r+val, c-incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+val][mid-incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+val][mid-incrementer]
+                    a5 = photo.get(x_axis+val, y_axis-inc)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid+val][mid-inc]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid+val][mid-inc]
                 except:
                     pass
 
                 # pixels missed on left upper added to weighted sum of the pixel
                 try:
-                    avg_pixel5 = img.get(r-val, c-incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-val][mid-incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-val][mid-incrementer]
+                    a5 = photo.get(x_axis-val, y_axis-inc)
+                    a5 = (a5[0] +
+                                  a5[1] + a5[2])//3
+                    weight_of_avg_pixel5 = weights[mid-val][mid-inc]
+                    total_pixel_weight += (a5 * weight_of_avg_pixel5)
+                    weights_sum += weights[mid-val][mid-inc]
                 except:
                     pass
 
             temp_offset += 1
-            incrementer += 1
+            inc += 1
 
         if average:
             new_value = int(total_pixel_weight // weights_sum)
@@ -760,13 +742,13 @@ def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
             new_value = min(max(0, new_value), 255)
             new_value = (new_value, new_value, new_value)
 
-        result_img.set(r, c, new_value)
+        result_photo.set(x_axis, y_axis, new_value)
 
         # value of row and column incremented according to the pixels being traversed
-        if c == (width-1):
-            c = -1
-            r += 1
+        if y_axis == (WT-1):
+            y_axis = -1
+            x_axis += 1
 
-        c += 1
+        y_axis += 1
 
-    return result_img
+    return result_photo
