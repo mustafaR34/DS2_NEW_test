@@ -24,13 +24,10 @@ class MyList:
 
     def __init__(self, size: int, value=None) -> None:
         """Creates a list of the given size, optionally intializing elements to value.
-
         The list is static. It only has space for size elements.
-
         Args:
         - size: size of the list; space is reserved for these many elements. 
         - value: the optional initial value of the created elements.
-
         Returns:
         none
         """
@@ -38,11 +35,8 @@ class MyList:
 
     def __len__(self) -> int:
         '''Returns the size of the list. Allows len() to be called on it.
-
         Ref: https://stackoverflow.com/q/7642434/1382487
-
         Args:
-
         Returns:
         the size of the list.
         '''
@@ -50,12 +44,9 @@ class MyList:
 
     def __getitem__(self, i: int):
         '''Returns the value at index, i. Allows indexing syntax.
-
         Ref: https://stackoverflow.com/a/33882066/1382487
-
         Args:
         - i: the index from which to retrieve the value.
-
         Returns:
         the value at index i.
         '''
@@ -66,13 +57,10 @@ class MyList:
 
     def __setitem__(self, i: int, value) -> None:
         '''Sets the element at index, i, to value. Allows indexing syntax.
-
         Ref: https://stackoverflow.com/a/33882066/1382487
-
         Args:
         - i: the index of the elemnent to be set
         - value: the value to be set
-
         Returns:
         none
         '''
@@ -83,11 +71,8 @@ class MyList:
 
     def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
-
         Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
-
         Args:
-
         Returns:
         an iterator that allows iteration over this list.
         '''
@@ -95,12 +80,9 @@ class MyList:
 
     def get(self, i: int):
         '''Returns the value at index, i.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index from which to retrieve the value.
-
         Returns:
         the value at index i.
         '''
@@ -108,15 +90,11 @@ class MyList:
 
     def set(self, i: int, value) -> None:
         '''Sets the element at index, i, to value.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index of the elemnent to be set
         - value: the value to be set
-
         Returns:
         none
         '''
         self[i] = value
-
