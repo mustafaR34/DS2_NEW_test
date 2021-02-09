@@ -452,256 +452,43 @@ def rotations(src: MyImage) -> MyImage:
 
     return result_img
 
-
 def apply_mask(src: MyImage, maskfile: str, average: bool = True) -> MyImage:
-    """Returns an copy of src with the mask from maskfile applied to it.
-    maskfile specifies a text file which contains an n by n mask. It has the
-    following format:
-    - the first line contains n
-    - the next n^2 lines contain 1 element each of the flattened mask
-    Args:
-    - src: the image on which the mask is to be applied
-    - maskfile: path to a file specifying the mask to be applied
-    - average: if True, averaging should to be done when applying the mask
-    Returns:
-    an image which the result of applying the specified mask to src.
-    """
-
-    width, height = src.size
-
-    img = src
-
-    # new image instantiated that will store the resultant image
-    result_img = MyImage((width, height), src.pointer)
-
-    f = open(maskfile, "r")
-    f = f.readlines()
-    weights = []
-
-    # mask length stores the size of matrix - n
-    mask_length = int(f[0])
-
-    # weights 2D list implemented below
-    temp = []
-    for i in range(1, len(f)):
-        temp.append(int(f[i]))
-        if i % mask_length == 0:
-            weights.append(temp)
-            temp = []
-
-    # row (r) and column (c) used further below for accessing the position of each pixel and using the same for weights list
-    r = 0
-    c = 0
-
-    for i in img.pixels:
-        total_pixel_weight = 0
-        weights_sum = 0
-
-        mid = mask_length//2
-        weights_mid = weights[mid][mid]
-        incrementer = 1
-        temp_offset = 0
-
-        # middle pixel weight added
-        mid_pixel = img.get(r, c)
-        total_pixel_weight += (int((mid_pixel[0]+mid_pixel[1] +
-                                    mid_pixel[2])//3)) * weights_mid
-
-        weights_sum = weights[mid][mid]
-
-        for j in range(mid+1, mask_length):
-            # pixels on right added to weighted sum of the pixel
-            try:
-                avg_pixel = img.get(r, c+incrementer)
-                avg_pixel = (avg_pixel[0] + avg_pixel[1] + avg_pixel[2])//3
-                weight_of_avg_pixel = weights[mid][mid+incrementer]
-                total_pixel_weight += (avg_pixel * weight_of_avg_pixel)
-                weights_sum += weights[mid][mid+incrementer]
-            except:
-                pass
-
-            # pixels on left added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r, c-incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid][mid-incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid][mid-incrementer]
-            except:
-                pass
-
-            # pixels on upper side added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r+incrementer, c)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid+incrementer][mid]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid+incrementer][mid]
-            except:
-                pass
-
-            # pixels on lower side added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r-incrementer, c)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel = weights[mid-incrementer][mid]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel)
-                weights_sum += weights[mid-incrementer][mid]
-            except:
-                pass
-
-            # pixels on upper left diagonal added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r-incrementer, c-incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel2 = weights[mid -
-                                               incrementer][mid-incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid-incrementer][mid-incrementer]
-            except:
-                pass
-
-            # pixels on bottom right added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r+incrementer, c+incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel2 = weights[mid +
-                                               incrementer][mid+incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid+incrementer][mid+incrementer]
-            except:
-                pass
-
-            # pixels on upper right added to weighted sum of the pixel
-            try:
-                avg_pixel2 = img.get(r-incrementer, c+incrementer)
-                avg_pixel2 = (avg_pixel2[0] + avg_pixel2[1] + avg_pixel2[2])//3
-                weight_of_avg_pixel2 = weights[mid -
-                                               incrementer][mid+incrementer]
-                total_pixel_weight += (avg_pixel2 * weight_of_avg_pixel2)
-                weights_sum += weights[mid-incrementer][mid+incrementer]
-            except:
-                pass
-
-            # pixels on bottom left added to weighted sum of the pixel
-            try:
-                avg_pixel3 = img.get(r+incrementer, c-incrementer)
-                avg_pixel3 = (avg_pixel3[0] + avg_pixel3[1] + avg_pixel3[2])//3
-                weight_of_avg_pixel3 = weights[mid +
-                                               incrementer][mid-incrementer]
-                total_pixel_weight += (avg_pixel3 * weight_of_avg_pixel3)
-                weights_sum += weights[mid+incrementer][mid-incrementer]
-            except:
-                pass
-
-            for val in range(1, temp_offset+1):
-                # pixels missed on upper right added to weighted sum of the pixel
-                try:
-                    avg_pixel4 = img.get(r-incrementer, c+val)
-                    avg_pixel4 = (avg_pixel4[0] +
-                                  avg_pixel4[1] + avg_pixel4[2])//3
-
-                    weight_of_avg_pixel4 = weights[mid-incrementer][mid+val]
-                    total_pixel_weight += (avg_pixel4 * weight_of_avg_pixel4)
-                    weights_sum += weights[mid-incrementer][mid+val]
-                except:
-                    pass
-
-                # pixels missed on upper left added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r-incrementer, c-val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-incrementer][mid-val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-incrementer][mid-val]
-                except:
-                    pass
-
-                # pixels missed on lower right added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+incrementer, c+val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+incrementer][mid+val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+incrementer][mid+val]
-                except:
-                    pass
-
-                # pixels missed on lower left added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+incrementer, c-val)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+incrementer][mid-val]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+incrementer][mid-val]
-                except:
-                    pass
-
-                # pixels missed on right lower added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+val, c+incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+val][mid+incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+val][mid+incrementer]
-                except:
-                    pass
-
-                # pixels missed on right upper added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r-val, c+incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-val][mid+incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-val][mid+incrementer]
-                except:
-                    pass
-
-                # pixels missed on left lower added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r+val, c-incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid+val][mid-incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid+val][mid-incrementer]
-                except:
-                    pass
-
-                # pixels missed on left upper added to weighted sum of the pixel
-                try:
-                    avg_pixel5 = img.get(r-val, c-incrementer)
-                    avg_pixel5 = (avg_pixel5[0] +
-                                  avg_pixel5[1] + avg_pixel5[2])//3
-                    weight_of_avg_pixel5 = weights[mid-val][mid-incrementer]
-                    total_pixel_weight += (avg_pixel5 * weight_of_avg_pixel5)
-                    weights_sum += weights[mid-val][mid-incrementer]
-                except:
-                    pass
-
-            temp_offset += 1
-            incrementer += 1
-
-        if average:
-            new_value = int(total_pixel_weight // weights_sum)
-            new_value = (new_value, new_value, new_value)
-        else:
-            new_value = int(total_pixel_weight)
-            new_value = min(max(0, new_value), 255)
-            new_value = (new_value, new_value, new_value)
-
-        result_img.set(r, c, new_value)
-
-        # value of row and column incremented according to the pixels being traversed
-        if c == (width-1):
-            c = -1
-            r += 1
-
-        c += 1
-
-    return result_img
+    
+    newImage = MyImage(src.size)
+    column,row=src.size
+    mask=open(maskfile,'r')
+    masking_matrix=[]
+    average_denominator=0
+    mask_size=int(mask.readline())
+    
+    mask_lines=mask.readlines()
+    for i in range(0,len(mask_lines)):
+        masking_matrix.append(int(mask_lines[i]))
+    
+    for i in range(row):
+        for j in range(column):
+            value = 0
+            mask_index = 0
+            average_denominator = 0
+            for x in range(-(mask_size//2), (mask_size//2)+1, 1):
+                for y in range(-(mask_size//2), (mask_size//2)+1, 1):
+                    try:
+                        value += (sum(src.get(i+x, j+y))//3 ) * masking_matrix[mask_index]
+                        average_denominator = average_denominator + masking_matrix[mask_index]
+                        mask_index += 1
+                    except:
+                        mask_index += 1
+                        continue
+            if average==True:
+                value=int(value//average_denominator)
+            if value < 0 or value > 255:
+                value=min(max(0,value), 255)
+            newImage.set(i,j,(value,value,value))
+    # newImage.show()
+    # newImage.save('give path file here')
+    return newImage
+#img=MyImage((100,100))
+#myimg = MyImage.open('hu-logo.png')
+#rotations(myimg)
+# remove_channel(myimg,True,False,False)
+#apply_mask(myimg,'mask-blur-more.txt')
