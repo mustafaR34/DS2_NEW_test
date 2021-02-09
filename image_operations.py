@@ -1,5 +1,5 @@
 from PIL import Image
-from APL impoer *
+from APL import *
 import array as arr
 
 
