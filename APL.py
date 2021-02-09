@@ -11,12 +11,13 @@ class PointerListIterator:
         self._index: int = 0
 
     def __next__(self):
-        if self._index < len(self._lst):
+        if len(self._lst) > self._index:
             value = self._lst[self._index]
             self._index += 1
             return value
         # End of Iteration
-        raise StopIteration
+        else:
+            raise StopIteration
 
 
 class Node:
@@ -27,17 +28,14 @@ class Node:
 
 
 class PointerList:
-    '''A list interface.'''
+    '''list interface.'''
 
     def __init__(self, size: int, value=None) -> None:
         """Creates a list of the given size, optionally intializing elements to value.
-
         The list is static. It only has space for size elements.
-
         Args:
         - size: size of the list; space is reserved for these many elements.
         - value: the optional initial value of the created elements.
-
         Returns:
         none
         """
@@ -48,80 +46,73 @@ class PointerList:
             self.insert(i, value)
 
     def __len__(self):
-        return self.size
+        length_p = self.size
+        return length_p
 
     def __iter__(self) -> PointerListIterator:
         '''Returns an iterator that allows iteration over this list.
-
         Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
-
         Args:
-
         Returns:
         an iterator that allows iteration over this list.
         '''
-        return PointerListIterator(self)
+        p_iterator = PointerListIterator(self)
+        return p_iterator
 
     def __getitem__(self, i: int):
         '''Returns the value at index, i.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index from which to retrieve the value.
-
         Returns:
         the value at index i.
         '''
-        u = self.head
+        universal = self.head
         for index in range(i):
-            u = u.next
-        return u.value
+            universal = universal.next
+        else:
+            return universal.value
 
     def __setitem__(self, i: int, value) -> None:
         '''Sets the element at index, i, to value.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index of the elemnent to be set
         - value: the value to be set
-
         Returns:
         none
         '''
-        u = self.head
+        universal = self.head
         for index in range(i):
-            u = u.next
-        u.value = value
+            universal = universal.next
+        else:
+            universal.value = value
+
 
     def insert(self, i, value):
 
-        temp_node = Node(value)
+        temporary_t_node = Node(value)
         if self.size == 0:
-            self.head = temp_node
+            self.head = temporary_t_node
         elif i == 0:
-            temp_node.next = self.head
-            self.head = temp_node
+            temporary_t_node.next = self.head
+            self.head = temporary_t_node
 
         else:
-            u = self.head
+            universal = self.head
             for index in range(i-1):
-                u = u.next
+                universal = universal.next
 
-            temp_node.next = u.next
-            u.next = temp_node
-        self.size += 1
+            temporary_t_node.next = universal.next
+            universal.next = temporary_t_node
+        self.size = self.size + 1
 
     def set(self, i: int, value) -> None:
         '''Sets the element at index, i, to value.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index of the elemnent to be set
         - value: the value to be set
-
         Returns:
         none
         '''
@@ -129,12 +120,9 @@ class PointerList:
 
     def get(self, i: int):
         '''Returns the value at index, i.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index from which to retrieve the value.
-
         Returns:
         the value at index i.
         '''
@@ -154,12 +142,14 @@ class ArrayListIterator:
 
     def __next__(self):
         ''''Returns the next value from the stored MyList instance.'''
-        if self._index < len(self._lst):
+        if len(self._lst) > self._index:
             value = self._lst[self._index]
-            self._index += 1
+            self._index
+            self._index = self._index + 1
             return value
         # End of Iteration
-        raise StopIteration
+        else:
+            raise StopIteration
 
 
 class ArrayList:
@@ -167,13 +157,10 @@ class ArrayList:
 
     def __init__(self, size: int, value=None) -> None:
         """Creates a list of the given size, optionally intializing elements to value.
-
         The list is static. It only has space for size elements.
-
         Args:
         - size: size of the list; space is reserved for these many elements. 
         - value: the optional initial value of the created elements.
-
         Returns:
         none
         """
@@ -185,11 +172,8 @@ class ArrayList:
 
     def __len__(self) -> int:
         '''Returns the size of the list. Allows len() to be called on it.
-
         Ref: https://stackoverflow.com/q/7642434/1382487
-
         Args:
-
         Returns:
         the size of the list.
         '''
@@ -197,12 +181,9 @@ class ArrayList:
 
     def __getitem__(self, i: int):
         '''Returns the value at index, i. Allows indexing syntax.
-
         Ref: https://stackoverflow.com/a/33882066/1382487
-
         Args:
         - i: the index from which to retrieve the value.
-
         Returns:
         the value at index i.
         '''
@@ -214,13 +195,10 @@ class ArrayList:
 
     def __setitem__(self, i: int, value) -> None:
         '''Sets the element at index, i, to value. Allows indexing syntax.
-
         Ref: https://stackoverflow.com/a/33882066/1382487
-
         Args:
         - i: the index of the elemnent to be set
         - value: the value to be set
-
         Returns:
         none
         '''
@@ -234,24 +212,19 @@ class ArrayList:
 
     def __iter__(self) -> MyListIterator:
         '''Returns an iterator that allows iteration over this list.
-
         Ref: https://thispointer.com/python-how-to-make-a-class-iterable-create-iterator-class-for-it/
-
         Args:
-
         Returns:
         an iterator that allows iteration over this list.
         '''
-        return ArrayListIterator(self)
+        a_iterator = ArrayListIterator(self)
+        return a_iterator
 
     def get(self, i: int):
         '''Returns the value at index, i.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index from which to retrieve the value.
-
         Returns:
         the value at index i.
         '''
@@ -259,15 +232,11 @@ class ArrayList:
 
     def set(self, i: int, value) -> None:
         '''Sets the element at index, i, to value.
-
         Alternate to use of indexing syntax.
-
         Args:
         - i: the index of the elemnent to be set
         - value: the value to be set
-
         Returns:
         none
         '''
         self[i] = value
-
