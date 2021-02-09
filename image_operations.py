@@ -96,83 +96,83 @@ class MyImage:
         img.putdata([rgb for rgb in self.pixels])
         img.show()
 
-# def remove_channel(src: MyImage, red: bool = False, green: bool = False,
-#                    blue: bool = False) -> MyImage:
-#     """Returns a copy of src in which the indicated channels are suppressed.
-
-#     Suppresses the red channel if no channel is indicated. src is not modified.
-
-#     Args:
-#     - src: the image whose copy the indicated channels have to be suppressed.
-#     - red: suppress the red channel if this is True.
-#     - green: suppress the green channel if this is True.
-#     - blue: suppress the blue channel if this is True.
-
-#     Returns:
-#     a copy of src with the indicated channels suppressed.
-#     """
-#     WT, HT = src.size
-
-#     # photo will store the resultant image in this case
-#     photo = src
-
-#     for j in range(HT):
-#         for i in range(WT):
-#             temp_t_tuple = photo.get(j, i)
-
-#             # RED color suppressed if RED is true
-#             if RED:
-#                 temp_t_tuple = (0,) + (temp_t_tuple[1],) + (temp_t_tuple[2],)
-
-#             # GREEN color suppressed if GREEN is true
-#             if GREEN:
-#                 temp_t_tuple = (temp_t_tuple[0],) + (0,) + (temp_t_tuple[2],)
-
-#             # BLUE color suppressed if BLUE is true
-#             if BLUE:
-#                 temp_t_tuple = (temp_t_tuple[0],) + (temp_t_tuple[1],) + (0,)
-
-#             # default condition implemented (RED channel suppressed)
-#             if RED == False and BLUE == False and GREEN == False:
-#                 temp_t_tuple = (0,) + (temp_t_tuple[1],) + (temp_t_tuple[2],)
-
-#             photo.set(j, i, temp_t_tuple)
-
-#     return photo        
-
-
 def remove_channel(src: MyImage, red: bool = False, green: bool = False,
                    blue: bool = False) -> MyImage:
     """Returns a copy of src in which the indicated channels are suppressed.
+
     Suppresses the red channel if no channel is indicated. src is not modified.
+
     Args:
     - src: the image whose copy the indicated channels have to be suppressed.
     - red: suppress the red channel if this is True.
     - green: suppress the green channel if this is True.
     - blue: suppress the blue channel if this is True.
+
     Returns:
     a copy of src with the indicated channels suppressed.
     """
-    width, height = src.size
-    # img will store the resultant image in this case
-    img = src
-    for j in range(height):
-        for i in range(width):
-            temp_tuple = img.get(j, i)
+    WT, HT = src.size
+
+    # photo will store the resultant image in this case
+    photo = src
+
+    for j in range(HT):
+        for i in range(WT):
+            temp_t_tuple = photo.get(j, i)
+
             # red color suppressed if red is true
             if red:
-                temp_tuple = (0,) + (temp_tuple[1],) + (temp_tuple[2],)
+                temp_t_tuple = (0,) + (temp_t_tuple[1],) + (temp_t_tuple[2],)
+
             # green color suppressed if green is true
             if green:
-                temp_tuple = (temp_tuple[0],) + (0,) + (temp_tuple[2],)
+                temp_t_tuple = (temp_t_tuple[0],) + (0,) + (temp_t_tuple[2],)
+
             # blue color suppressed if blue is true
             if blue:
-                temp_tuple = (temp_tuple[0],) + (temp_tuple[1],) + (0,)
+                temp_t_tuple = (temp_t_tuple[0],) + (temp_t_tuple[1],) + (0,)
+
             # default condition implemented (red channel suppressed)
             if red == False and blue == False and green == False:
-                temp_tuple = (0,) + (temp_tuple[1],) + (temp_tuple[2],)
-            img.set(j, i, temp_tuple)
-    return img
+                temp_t_tuple = (0,) + (temp_t_tuple[1],) + (temp_t_tuple[2],)
+
+            photo.set(j, i, temp_t_tuple)
+
+    return photo     
+
+
+# def remove_channel(src: MyImage, red: bool = False, green: bool = False,
+#                    blue: bool = False) -> MyImage:
+#     """Returns a copy of src in which the indicated channels are suppressed.
+#     Suppresses the red channel if no channel is indicated. src is not modified.
+#     Args:
+#     - src: the image whose copy the indicated channels have to be suppressed.
+#     - red: suppress the red channel if this is True.
+#     - green: suppress the green channel if this is True.
+#     - blue: suppress the blue channel if this is True.
+#     Returns:
+#     a copy of src with the indicated channels suppressed.
+#     """
+#     width, height = src.size
+#     # img will store the resultant image in this case
+#     img = src
+#     for j in range(height):
+#         for i in range(width):
+#             temp_tuple = img.get(j, i)
+#             # red color suppressed if red is true
+#             if red:
+#                 temp_tuple = (0,) + (temp_tuple[1],) + (temp_tuple[2],)
+#             # green color suppressed if green is true
+#             if green:
+#                 temp_tuple = (temp_tuple[0],) + (0,) + (temp_tuple[2],)
+#             # blue color suppressed if blue is true
+#             if blue:
+#                 temp_tuple = (temp_tuple[0],) + (temp_tuple[1],) + (0,)
+#             # default condition implemented (red channel suppressed)
+#             if red == False and blue == False and green == False:
+#                 temp_tuple = (0,) + (temp_tuple[1],) + (temp_tuple[2],)
+#             img.set(j, i, temp_tuple)
+#     return img
 
 def rotations(src: MyImage) -> MyImage:
     """Returns an image containing the 4 rotations of src.
