@@ -1,3 +1,4 @@
+from mylist import *
 import array as arr
 
 class PointerListIterator:
